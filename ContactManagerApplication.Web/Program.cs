@@ -1,3 +1,10 @@
+using ContactManagerApplication.Application.Contracts;
+using ContactManagerApplication.Application.Service;
+using ContactManagerApplication.Infrastructure.Context;
+using ContactManagerApplication.Infrastructure.Contracts;
+using ContactManagerApplication.Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore;
+
 namespace ContactManagerApplication.Web;
 
 public class Program
@@ -6,16 +13,22 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
+        builder.Services.AddDbContext<AppDbContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+        // Register repositories and services with interfaces for DI
+        builder.Services.AddScoped<IContactRepository, ContactRepository>();
+        builder.Services.AddScoped<IContactService, ContactService>();
+
+        // Add controllers with views
         builder.Services.AddControllersWithViews();
 
         var app = builder.Build();
 
-        // Configure the HTTP request pipeline.
+        // Configure the HTTP request pipeline
         if (!app.Environment.IsDevelopment())
         {
             app.UseExceptionHandler("/Home/Error");
-            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
         }
 
@@ -28,7 +41,7 @@ public class Program
 
         app.MapControllerRoute(
             name: "default",
-            pattern: "{controller=Home}/{action=Index}/{id?}");
+            pattern: "{controller=Contact}/{action=Index}/{id?}");
 
         app.Run();
     }

@@ -1,4 +1,5 @@
 using System.Globalization;
+using ContactManagerApplication.Application.Contracts;
 using ContactManagerApplication.Application.DTOs;
 using ContactManagerApplication.Domain.Entities;
 using ContactManagerApplication.Infrastructure.Contracts;
@@ -7,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace ContactManagerApplication.Application.Service;
 
-public class ContactService
+public class ContactService : IContactService
 {
     private readonly IContactRepository _repository;
 
