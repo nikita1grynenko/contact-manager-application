@@ -1,50 +1,93 @@
+using System.Globalization;
 using ContactManagerApplication.Application.Contracts;
 using ContactManagerApplication.Application.DTOs;
+using ContactManagerApplication.Domain.Entities;
+using CsvHelper;
+using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ContactManagerApplication.Web.Controllers;
 
 public class ContactController : Controller
 {
-    private readonly IContactService _service;
+    private readonly IContactService _contactService;
 
-    public ContactController(IContactService service)
+    public ContactController(IContactService contactService)
     {
-        _service = service;
+        _contactService = contactService;
     }
 
     public async Task<IActionResult> Index()
     {
-        var contacts = await _service.GetAllContactsAsync();
+        var contacts = await _contactService.GetAllContactsAsync();
         return View(contacts);
     }
 
     [HttpPost]
-    public async Task<IActionResult> UploadCsv(IFormFile file)
+    public async Task<IActionResult> UploadCsvFile(IFormFile file)
     {
-        try
+        if (file == null || file.Length == 0)
         {
-            await _service.AddContactsFromCsvAsync(file);
-            return RedirectToAction("Index");
+            return BadRequest("No file uploaded.");
         }
-        catch (Exception ex)
+
+        var config = new CsvConfiguration(CultureInfo.InvariantCulture)
         {
-            ModelState.AddModelError("", ex.Message);
-            return View("Error");
+            HeaderValidated = null, // Игнорируем отсутствие заголовков
+            MissingFieldFound = null // Игнорируем отсутствующие поля
+        };
+
+        using (var reader = new StreamReader(file.OpenReadStream()))
+        using (var csv = new CsvReader(reader, config))
+        {
+            try
+            {
+                var contacts = csv.GetRecords<Contact>().ToList();
+
+                foreach (var contact in contacts)
+                {
+                    await _contactService.AddContactAsync(contact);
+                }
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error processing CSV file: {ex.Message}");
+            }
         }
     }
 
     [HttpPost]
-    public async Task<IActionResult> Edit(int id, ContactDto contact)
+    public async Task<IActionResult> UpdateContact([FromBody] Contact contact)
     {
-        await _service.UpdateContactAsync(id, contact);
-        return Ok();
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        try
+        {
+            // Update the contact in your database
+            await _contactService.UpdateContactAsync(contact);
+            return Json(new { success = true });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
-    [HttpDelete]
-    public async Task<IActionResult> Delete(int id)
+    [HttpPost]
+    public async Task<IActionResult> DeleteContact(int id)
     {
-        await _service.DeleteContactAsync(id);
-        return Ok();
+        try{
+            await _contactService.DeleteContactAsync(id);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
     }
 }
