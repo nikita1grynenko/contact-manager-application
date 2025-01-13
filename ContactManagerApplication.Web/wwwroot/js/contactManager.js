@@ -4,7 +4,6 @@ class ContactManager {
         this.initializeDataTable();
         this.bindEvents();
 
-        // Make deleteContact globally available
         window.deleteContact = this.deleteContact;
     }
 
@@ -48,11 +47,11 @@ class ContactManager {
         // Parse date
         const dateStr = row.find('[data-column="DateOfBirth"]').text().trim();
         const dateParts = dateStr.split('.');
-        const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`; // Convert to yyyy-MM-dd
+        const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`; 
 
         // Parse salary
         let salaryStr = row.find('[data-column="Salary"]').text().trim();
-        salaryStr = salaryStr.replace(',', '.');  // Заміна коми на точку
+        salaryStr = salaryStr.replace(',', '.');  
         const salary = parseFloat(salaryStr.replace(/[^0-9.-]+/g, ''));
         return {
             id: parseInt(row.data('id')),
