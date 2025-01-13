@@ -22,7 +22,7 @@ The Contact Manager Application is a web-based system designed to manage contact
 
 ### Prerequisites
 
-- .NET 6.0 or later
+- .NET 8.0
 - SQL Server (or another database of your choice)
 - Visual Studio or any compatible IDE for C# development
 
