@@ -1,10 +1,7 @@
-using System.Globalization;
 using ContactManagerApplication.Application.Contracts;
-using ContactManagerApplication.Application.DTOs;
 using ContactManagerApplication.Domain.Entities;
 using ContactManagerApplication.Infrastructure.Contracts;
-using CsvHelper;
-using Microsoft.AspNetCore.Http;
+
 
 namespace ContactManagerApplication.Application.Service;
 

@@ -51,9 +51,9 @@ class ContactManager {
         const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`; // Convert to yyyy-MM-dd
 
         // Parse salary
-        const salaryStr = row.find('[data-column="Salary"]').text().trim();
+        let salaryStr = row.find('[data-column="Salary"]').text().trim();
+        salaryStr = salaryStr.replace(',', '.');  // Заміна коми на точку
         const salary = parseFloat(salaryStr.replace(/[^0-9.-]+/g, ''));
-
         return {
             id: parseInt(row.data('id')),
             Name: row.find('[data-column="Name"]').text().trim(),

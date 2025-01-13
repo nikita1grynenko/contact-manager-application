@@ -1,6 +1,5 @@
 using System.Globalization;
 using ContactManagerApplication.Application.Contracts;
-using ContactManagerApplication.Application.DTOs;
 using ContactManagerApplication.Domain.Entities;
 using CsvHelper;
 using CsvHelper.Configuration;
@@ -33,8 +32,8 @@ public class ContactController : Controller
 
         var config = new CsvConfiguration(CultureInfo.InvariantCulture)
         {
-            HeaderValidated = null, // Игнорируем отсутствие заголовков
-            MissingFieldFound = null // Игнорируем отсутствующие поля
+            HeaderValidated = null, 
+            MissingFieldFound = null 
         };
 
         using (var reader = new StreamReader(file.OpenReadStream()))
@@ -68,7 +67,6 @@ public class ContactController : Controller
 
         try
         {
-            // Update the contact in your database
             await _contactService.UpdateContactAsync(contact);
             return Json(new { success = true });
         }

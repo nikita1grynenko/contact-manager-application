@@ -1,8 +1,11 @@
 using ContactManagerApplication.Application.Contracts;
 using ContactManagerApplication.Application.Service;
+using ContactManagerApplication.Application.Validators;
 using ContactManagerApplication.Infrastructure.Context;
 using ContactManagerApplication.Infrastructure.Contracts;
 using ContactManagerApplication.Infrastructure.Repositories;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace ContactManagerApplication.Web;
@@ -22,6 +25,10 @@ public class Program
 
         // Add controllers with views
         builder.Services.AddControllersWithViews();
+        builder.Services.AddValidatorsFromAssemblyContaining<ContactValidator>(); 
+        builder.Services.AddFluentValidationAutoValidation(); 
+        builder.Services.AddFluentValidationClientsideAdapters(); 
+
 
         var app = builder.Build();
 

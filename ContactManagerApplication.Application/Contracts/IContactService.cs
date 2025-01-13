@@ -1,6 +1,4 @@
-using ContactManagerApplication.Application.DTOs;
 using ContactManagerApplication.Domain.Entities;
-using Microsoft.AspNetCore.Http;
 
 namespace ContactManagerApplication.Application.Contracts;
 
