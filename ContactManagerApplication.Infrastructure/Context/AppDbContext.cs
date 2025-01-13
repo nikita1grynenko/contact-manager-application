@@ -3,8 +3,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ContactManagerApplication.Infrastructure.Context;
 
-public class ApplicationDbContext : DbContext
+public class AppDbContext : DbContext
 {
     public DbSet<Contact> Contacts { get; set; }
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 }
