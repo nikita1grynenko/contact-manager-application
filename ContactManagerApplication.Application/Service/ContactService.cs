@@ -10,68 +10,35 @@ namespace ContactManagerApplication.Application.Service;
 
 public class ContactService : IContactService
 {
-    private readonly IContactRepository _repository;
+    private readonly IContactRepository _contactRepository;
 
-    public ContactService(IContactRepository repository)
+    public ContactService(IContactRepository contactRepository)
     {
-        _repository = repository;
+        _contactRepository = contactRepository;
     }
 
-    public async Task<IEnumerable<ContactDto>> GetAllContactsAsync()
+    public async Task<IEnumerable<Contact>> GetAllContactsAsync()
     {
-        var contacts = await _repository.GetAllAsync();
-        return contacts.Select(c => new ContactDto
-        {
-            Name = c.Name,
-            DateOfBirth = c.DateOfBirth,
-            Married = c.Married,
-            Phone = c.Phone,
-            Salary = c.Salary
-        });
+        return await _contactRepository.GetAllContactsAsync();
     }
 
-    public async Task AddContactsFromCsvAsync(IFormFile file)
+    public async Task<Contact> GetContactByIdAsync(int id)
     {
-        if (file == null || file.Length == 0)
-            throw new ArgumentException("Invalid file.");
-
-        using (var reader = new StreamReader(file.OpenReadStream()))
-        using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
-        {
-            var records = csv.GetRecords<ContactDto>().ToList();
-            var entities = records.Select(r => new Contact
-            {
-                Name = r.Name,
-                DateOfBirth = r.DateOfBirth,
-                Married = r.Married,
-                Phone = r.Phone,
-                Salary = r.Salary
-            });
-
-            foreach (var entity in entities)
-            {
-                await _repository.AddAsync(entity);
-            }
-        }
+        return await _contactRepository.GetContactByIdAsync(id);
     }
 
-    public async Task UpdateContactAsync(int id, ContactDto contact)
+    public async Task AddContactAsync(Contact contact)
     {
-        var entity = await _repository.GetByIdAsync(id);
-        if (entity == null)
-            throw new KeyNotFoundException("Contact not found.");
+        await _contactRepository.AddContactAsync(contact);
+    }
 
-        entity.Name = contact.Name;
-        entity.DateOfBirth = contact.DateOfBirth;
-        entity.Married = contact.Married;
-        entity.Phone = contact.Phone;
-        entity.Salary = contact.Salary;
-
-        await _repository.UpdateAsync(entity);
+    public async Task UpdateContactAsync(Contact contact)
+    {
+        await _contactRepository.UpdateContactAsync(contact);
     }
 
     public async Task DeleteContactAsync(int id)
     {
-        await _repository.DeleteAsync(id);
+        await _contactRepository.DeleteContactAsync(id);
     }
 }

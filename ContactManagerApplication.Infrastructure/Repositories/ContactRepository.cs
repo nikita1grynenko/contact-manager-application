@@ -14,29 +14,29 @@ public class ContactRepository : IContactRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<Contact>> GetAllAsync()
+    public async Task<IEnumerable<Contact>> GetAllContactsAsync()
     {
         return await _context.Contacts.ToListAsync();
     }
 
-    public async Task<Contact> GetByIdAsync(int id)
+    public async Task<Contact> GetContactByIdAsync(int id)
     {
         return await _context.Contacts.FindAsync(id);
     }
 
-    public async Task AddAsync(Contact contact)
+    public async Task AddContactAsync(Contact contact)
     {
         await _context.Contacts.AddAsync(contact);
         await _context.SaveChangesAsync();
     }
 
-    public async Task UpdateAsync(Contact contact)
+    public async Task UpdateContactAsync(Contact contact)
     {
         _context.Contacts.Update(contact);
         await _context.SaveChangesAsync();
     }
 
-    public async Task DeleteAsync(int id)
+    public async Task DeleteContactAsync(int id)
     {
         var contact = await _context.Contacts.FindAsync(id);
         if (contact != null)
